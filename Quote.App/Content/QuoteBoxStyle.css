@@ -1,3 +1,9 @@
+body {
+    background-color: rgba(32, 32, 36, 255);
+    color: white;
+    font-size: 16px;
+}
+
 .quotebox {
     background-color: transparent;
     border-radius: 3px;
