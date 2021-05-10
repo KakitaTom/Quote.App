@@ -1,0 +1,21 @@
+﻿@model Quote.App.Models.Quote
+
+<head>
+    <link href="~/Content/QuoteBoxStyle.css" rel="stylesheet" />
+</head>
+
+<div class="quotebox"><i class="fas fa-quote-left fa2"></i>
+    <div class="text"><i class="fas fa-quote-right fa1"></i>
+        <div>
+            <h3>Quote of the day</h3>
+            <hr>
+            <p>@Html.Raw(Html.Encode(Model.text).Replace("/N", "<br />"))</p>
+            <p style="text-align:right">~@Model.author~</p>
+        </div>
+    </div>
+</div>
+
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.id }) 
+    @Html.ActionLink("Back to List", "Index")
+</p>

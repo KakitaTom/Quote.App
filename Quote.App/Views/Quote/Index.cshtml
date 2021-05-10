@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Quote.App.Models.Quote>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create", null, new {@class ="btn btn-primary"})
+</p>
+
+@{ var number = 0;}
+
+<table class="table table-hover table-bordered">
+    <tr>
+        <th style="text-align: center">
+            <label>#</label>
+        </th>
+        <th style="text-align: center">
+            <label>Text</label>
+        </th>
+        <th style="text-align: center">
+            <label>Author</label>
+        </th>
+        <th style="text-align: center">
+            <label>Action</label>
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td style="text-align: center">
+            @Html.Raw(Html.Encode(++number))
+        </td>
+        <td>
+            @Html.Raw(Html.Encode(item.text).Replace("/N", "<br />"))
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.author)
+        </td>
+        <td style="text-align: center">
+            @Html.ActionLink("Edit", "Edit", new {id = item.id}, new {@class = "btn btn-warning"}) 
+            @Html.ActionLink("Details", "Details", new {id = item.id}, new {@class = "btn btn-info"}) 
+            @Html.ActionLink("Delete", "Delete", new {id = item.id}, new {@class = "btn btn-danger"})
+        </td>
+    </tr>
+}
+
+</table>
