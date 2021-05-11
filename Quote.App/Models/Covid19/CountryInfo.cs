@@ -9,5 +9,6 @@ namespace Quote.App.Models.Covid19
     {
         public string iso2 { get; set; }
         public string iso3 { get; set; }
+        public string flag { get; set; }
     }
 }

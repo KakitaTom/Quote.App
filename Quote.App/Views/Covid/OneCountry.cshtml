@@ -1,113 +1,33 @@
 ﻿@model Quote.App.Models.Covid19.CountryRoot
 
 @{
-    ViewBag.Title = "OneCountry";
+    ViewBag.Title = @Model.country;
 }
 
-<h2>OneCountry</h2>
+<div style="margin-top: 3%">
+    <div style="text-align: center">
+        <p><img src="@Model.countryInfo.flag" height="75px" width="112.5px" style="display: inline-block"></p>
+        <p style="font-size: 3.5em"><i><b>@Model.country</b></i></p>
+    </div>
 
-<div>
-    <h4>CountryRoot</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.country)
-        </dt>
+    <br />
 
-        <dd>
-            @Html.DisplayFor(model => model.country)
-        </dd>
+    <div style="text-align: center">
+        <p style="font-size: 2em">Coronavirus Cases:</p>
+        <p style="font-size: 3.5em; color: darkgrey"><b><i>@String.Format("{0:n0}", @Model.cases)</i></b></p>
+    </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.cases)
-        </dt>
+    <div style="text-align: center">
+        <p style="font-size: 2em">Deaths:</p>
+        <p style="font-size: 3.5em; color:grey"><b><i>@String.Format("{0:n0}", @Model.deaths)</i></b></p>
+    </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.cases)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.todayCases)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.todayCases)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.deaths)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.deaths)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.todayDeaths)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.todayDeaths)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.recovered)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.recovered)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.todayRecovered)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.todayRecovered)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.active)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.active)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.critical)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.critical)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.tests)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.tests)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.population)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.population)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.continent)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.continent)
-        </dd>
-
-    </dl>
+    <div style="text-align: center">
+        <p style="font-size: 2em">Recovered:</p>
+        <p style="font-size: 3.5em; color:#8ACA2B"><b><i>@String.Format("{0:n0}", @Model.recovered)</i></b></p>
+    </div>
 </div>
+
 <p>
     @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
     @Html.ActionLink("Back to List", "Index")
