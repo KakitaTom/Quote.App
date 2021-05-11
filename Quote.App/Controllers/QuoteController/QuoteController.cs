@@ -39,7 +39,6 @@ namespace Quote.App.Controllers.QuoteController
             return View(quotes);
         }
 
-
         public ActionResult Details(string Id)
         {
             Models.Quote quote = null;
@@ -146,7 +145,6 @@ namespace Quote.App.Controllers.QuoteController
         }
 
         [HttpPost]
-        [Route("quote/edit/{Id}")]
         public ActionResult Edit(string Id, Models.Quote quote)
         {
             using (var client = new HttpClient())
