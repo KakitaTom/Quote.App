@@ -179,6 +179,7 @@
     <Content Include="Views\Quote\Create.cshtml" />
     <Content Include="Views\Quote\Edit.cshtml" />
     <Content Include="Views\Covid\Index.cshtml" />
+    <Content Include="Views\Covid\OneCountry.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -45,7 +45,7 @@
     @foreach (var country in Model.countries)
     {
         <tr style="text-align: center">
-            <td>@country.country</td>
+            <td>@Html.ActionLink(country.country, "OneCountry", new { id = country.country })</td>
             <td>@country.cases</td>
             <td>@country.todayCases</td>
             <td>@country.deaths</td>

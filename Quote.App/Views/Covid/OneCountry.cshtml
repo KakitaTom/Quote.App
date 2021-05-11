@@ -1,0 +1,114 @@
+﻿@model Quote.App.Models.Covid19.CountryRoot
+
+@{
+    ViewBag.Title = "OneCountry";
+}
+
+<h2>OneCountry</h2>
+
+<div>
+    <h4>CountryRoot</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.country)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.country)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.cases)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.cases)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.todayCases)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.todayCases)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.deaths)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.deaths)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.todayDeaths)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.todayDeaths)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.recovered)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.recovered)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.todayRecovered)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.todayRecovered)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.active)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.active)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.critical)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.critical)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.tests)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tests)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.population)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.population)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.continent)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.continent)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
