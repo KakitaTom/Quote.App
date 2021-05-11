@@ -1,4 +1,4 @@
-﻿@model Quote.App.ViewModel.AllCountriesViewModel
+﻿@model Quote.App.ViewModel.ContinentCountriesViewModel
 
 @{
     ViewBag.Title = "Index";
@@ -14,18 +14,18 @@
 @* <button>Oceania</button> *@
 @* <button>South America</button> *@
 
-@Html.ActionLink("All", "FilterByContinent", new { id = "All"}, new { @class = "btn btn-default"})
-@Html.ActionLink("Asia", "FilterByContinent", new { id = "Asia"}, new { @class = "btn btn-default" })
-@Html.ActionLink("Africa", "FilterByContinent", new { id = "Africa"}, new { @class = "btn btn-default" })
-@Html.ActionLink("Europe", "FilterByContinent", new { id = "Europe"}, new { @class = "btn btn-default" })
-@Html.ActionLink("North America", "FilterByContinent", new { id = "North America"}, new { @class = "btn btn-default" })
-@Html.ActionLink("Oceania", "FilterByContinent", new { id = "Oceania"}, new { @class = "btn btn-default" })
-@Html.ActionLink("South America", "FilterByContinent", new { id = "South America"}, new { @class = "btn btn-default" })
+@Html.ActionLink("All", "FilterByContinent", new { id = "All" }, new { @class = "btn btn-default" })
+@Html.ActionLink("Asia", "FilterByContinent", new { id = "Asia" }, new { @class = "btn btn-default" })
+@Html.ActionLink("Africa", "FilterByContinent", new { id = "Africa" }, new { @class = "btn btn-default" })
+@Html.ActionLink("Europe", "FilterByContinent", new { id = "Europe" }, new { @class = "btn btn-default" })
+@Html.ActionLink("North America", "FilterByContinent", new { id = "North America" }, new { @class = "btn btn-default" })
+@Html.ActionLink("Oceania", "FilterByContinent", new { id = "Oceania" }, new { @class = "btn btn-default" })
+@Html.ActionLink("South America", "FilterByContinent", new { id = "South America" }, new { @class = "btn btn-default" })
 
 <table class="tablee table-hover table-bordered">
     <tr>
         <th><b>Country</b></th>
-        <th><b>Total<br/>Cases</b></th>
+        <th><b>Total<br />Cases</b></th>
         <th><b>Today<br />case</b></th>
         <th><b>Total<br />Deaths</b></th>
         <th><b>Today<br />Deaths</b></th>
@@ -38,17 +38,17 @@
     </tr>
 
     <tr>
-        <td>Global</td>
-        <td>@Model.global.cases</td>
-        <td>@Model.global.todayCases</td>
-        <td>@Model.global.deaths</td>
-        <td>@Model.global.todayDeaths</td>
-        <td>@Model.global.recovered</td>
-        <td>@Model.global.todayRecovered</td>
-        <td>@Model.global.active</td>
-        <td>@Model.global.critical</td>
-        <td>@Model.global.tests</td>
-        <td>@Model.global.population</td>
+        <td>@Model.continent.continent</td>
+        <td>@Model.continent.cases</td>
+        <td>@Model.continent.todayCases</td>
+        <td>@Model.continent.deaths</td>
+        <td>@Model.continent.todayDeaths</td>
+        <td>@Model.continent.recovered</td>
+        <td>@Model.continent.todayRecovered</td>
+        <td>@Model.continent.active</td>
+        <td>@Model.continent.critical</td>
+        <td>@Model.continent.tests</td>
+        <td>@Model.continent.population</td>
     </tr>
     @foreach (var country in Model.countries)
     {

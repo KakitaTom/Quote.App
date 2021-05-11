@@ -76,5 +76,105 @@ namespace Quote.App.Controllers.CovidController
 
             return HttpNotFound();
         }
+
+        public ActionResult FilterByContinent(string id)
+        {
+
+
+            //All
+            if (id.Equals("All", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return RedirectToAction("Index", "Covid", null);
+            }
+
+            IEnumerable<ContinentRoot> cons = null;
+            ContinentRoot oseania = null;
+
+            //Oceania
+            if (id.Equals("Oceania", StringComparison.CurrentCultureIgnoreCase))
+            {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("https://corona.lmao.ninja");
+                    var get = client.GetAsync("/v2/continents");
+                    get.Wait();
+
+                    var result = get.Result;
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var read = result.Content.ReadAsStringAsync();
+                        read.Wait();
+
+                        cons = JsonConvert.DeserializeObject<IEnumerable<ContinentRoot>>(read.Result);
+                    }
+                }
+
+                oseania = cons.FirstOrDefault(o => o.continent == "Australia/Oceania");
+            }
+
+
+
+            ContinentRoot con = null;
+            IEnumerable<CountryRoot> cous = null;
+            string listCountries;
+
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://corona.lmao.ninja");
+                var get = client.GetAsync("/v2/continents/" + id + "?strict");
+                get.Wait();
+
+                var result = get.Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    var read = result.Content.ReadAsStringAsync();
+                    read.Wait();
+
+                    con = JsonConvert.DeserializeObject<ContinentRoot>(read.Result);
+                }
+            }
+
+            
+
+            if (id.Equals("Oceania", StringComparison.CurrentCultureIgnoreCase))
+            {
+                listCountries = string.Join(",", oseania.countries);
+                con = oseania;
+            }
+            else
+            {
+                listCountries = string.Join(",", con.countries);
+            }
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://corona.lmao.ninja");
+                var get = client.GetAsync("/v2/countries/" + listCountries);
+                get.Wait();
+
+                var result = get.Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    var read = result.Content.ReadAsStringAsync();
+                    read.Wait();
+
+                    cous = JsonConvert.DeserializeObject<IEnumerable<CountryRoot>>(read.Result);
+                }
+            }
+
+            
+
+            var viewModel = new ContinentCountriesViewModel()
+            {
+                continent = con,
+                countries = cous
+            };
+
+            return View(viewModel);
+
+
+        }
+
     }
 }
