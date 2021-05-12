@@ -22,8 +22,8 @@ namespace Quote.App.Controllers.CovidController
 
             using(var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("https://corona.lmao.ninja");
-                var get = client.GetAsync("/v2/all");
+                client.BaseAddress = new Uri("https://disease.sh");
+                var get = client.GetAsync("/v3/covid-19/all");
                 get.Wait();
 
                 var result = get.Result;
@@ -38,8 +38,8 @@ namespace Quote.App.Controllers.CovidController
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("https://corona.lmao.ninja");
-                var get = client.GetAsync("/v2/countries");
+                client.BaseAddress = new Uri("https://disease.sh");
+                var get = client.GetAsync("/v3/covid-19/countries");
                 get.Wait();
 
                 var result = get.Result;
@@ -66,8 +66,8 @@ namespace Quote.App.Controllers.CovidController
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("https://corona.lmao.ninja");
-                var get = client.GetAsync("/v2/countries/" + id);
+                client.BaseAddress = new Uri("https://disease.sh");
+                var get = client.GetAsync("/v3/covid-19/countries/" + id);
                 get.Wait();
 
                 var result = get.Result;
@@ -82,8 +82,8 @@ namespace Quote.App.Controllers.CovidController
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("https://corona.lmao.ninja");
-                var get = client.GetAsync("v2/historical/" + id + "?lastdays=all");
+                client.BaseAddress = new Uri("https://disease.sh");
+                var get = client.GetAsync("/v3/covid-19/historical/" + id + "?lastdays=all");
                 get.Wait();
 
                 var result = get.Result;
@@ -95,9 +95,9 @@ namespace Quote.App.Controllers.CovidController
                     viewModel.historical = JsonConvert.DeserializeObject<HistoricalRoot>(read.Result);
 
                     dynamic stuff = JObject.Parse(read.Result);
-                    viewModel.historical.timeline.cases.dCase = JsonConvert.DeserializeObject<Dictionary<string, long>>((stuff.timeline.cases).ToString());
-                    viewModel.historical.timeline.deaths.dDeath = JsonConvert.DeserializeObject<Dictionary<string, long>>((stuff.timeline.deaths).ToString());
-                    viewModel.historical.timeline.recovered.dRecovered = JsonConvert.DeserializeObject<Dictionary<string, long>>((stuff.timeline.recovered).ToString());
+                    viewModel.historical.timeline.cases.dCase = JsonConvert.DeserializeObject<Dictionary<DateTime, long>>((stuff.timeline.cases).ToString());
+                    viewModel.historical.timeline.deaths.dDeath = JsonConvert.DeserializeObject<Dictionary<DateTime, long>>((stuff.timeline.deaths).ToString());
+                    viewModel.historical.timeline.recovered.dRecovered = JsonConvert.DeserializeObject<Dictionary<DateTime, long>>((stuff.timeline.recovered).ToString());
                 }
             }
             return View(viewModel);
@@ -112,38 +112,21 @@ namespace Quote.App.Controllers.CovidController
             }
 
             IEnumerable<ContinentRoot> cons = null;
-            ContinentRoot oseania = null;
-
-            //Oceania
-            if (id.Equals("Oceania", StringComparison.CurrentCultureIgnoreCase))
-            {
-                using (var client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri("https://corona.lmao.ninja");
-                    var get = client.GetAsync("/v2/continents");
-                    get.Wait();
-
-                    var result = get.Result;
-                    if (result.IsSuccessStatusCode)
-                    {
-                        var read = result.Content.ReadAsStringAsync();
-                        read.Wait();
-
-                        cons = JsonConvert.DeserializeObject<IEnumerable<ContinentRoot>>(read.Result);
-                    }
-                }
-
-                oseania = cons.FirstOrDefault(o => o.continent == "Australia/Oceania");
-            }
-
             ContinentRoot con = null;
             IEnumerable<CountryRoot> cous = null;
             string listCountries;
 
+            //Oceania
+            if (id.Equals("Oceania", StringComparison.CurrentCultureIgnoreCase))
+            {
+                id = "Australia%2FOceania";
+
+            }
+
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("https://corona.lmao.ninja");
-                var get = client.GetAsync("/v2/continents/" + id + "?strict");
+                client.BaseAddress = new Uri("https://disease.sh");
+                var get = client.GetAsync("/v3/covid-19/continents/" + id + "?strict=true");
                 get.Wait();
 
                 var result = get.Result;
@@ -156,20 +139,12 @@ namespace Quote.App.Controllers.CovidController
                 }
             }
 
-            if (id.Equals("Oceania", StringComparison.CurrentCultureIgnoreCase))
-            {
-                listCountries = string.Join(",", oseania.countries);
-                con = oseania;
-            }
-            else
-            {
-                listCountries = string.Join(",", con.countries);
-            }
+            listCountries = string.Join(",", con.countries);
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("https://corona.lmao.ninja");
-                var get = client.GetAsync("/v2/countries/" + listCountries);
+                client.BaseAddress = new Uri("https://disease.sh");
+                var get = client.GetAsync("/v3/covid-19/countries/" + listCountries);
                 get.Wait();
 
                 var result = get.Result;

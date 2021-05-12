@@ -30,41 +30,280 @@
         <p style="font-size: 2em">Recovered:</p>
         <p style="font-size: 3.5em; color:#8ACA2B"><b><i>@String.Format("{0:n0}", @Model.cou.recovered)</i></b></p>
     </div>
-    
-    <hr/>
 
-    <div class="list-inline">
-        <p style="font-size: 1.5em">Total Coronavirus Cases in @Model.cou.country</p>
-        <button class="btn btn-link" onclick="BasicScale()">Linear</button>
-        <button class="btn btn-link" onclick="LogScale()">Logarithmic</button>
-        <div id="chart_div"></div>
+    <hr />
 
+    <div class="list-inline" style="border-style: solid; border-width: 1px; border-color: #999999;">
+        <p style="font-size: 1.5em; text-align: center"><i>Total Coronavirus Cases in @Model.cou.country</i></p>
+        <button class="btn btn-link" onclick="casesLinearSwitch()">Linear</button>
+        <button class="btn btn-link" onclick="casesLogSwitch()">Logarithmic</button>
+        <div id="cases_chart"></div>
     </div>
-    
+
+    <br />
+    <br />
+    <br />
+
+    <div class="list-inline" style="border-style: solid; border-width: 1px; border-color: #999999;">
+        <p style="font-size: 1.5em; text-align: center"><i>Daily New Cases in @Model.cou.country</i></p>
+        <div id="dailycases_chart"></div>
+    </div>
+
+    <br />
+    <br />
+    <br />
+
+
+    <div class="list-inline" style="border-style: solid; border-width: 1px; border-color: #999999;">
+        <p style="font-size: 1.5em; text-align: center"><i>Daily New Cases in @Model.cou.country</i></p>
+        <div id="dailyactive_chart"></div>
+    </div>
+
+    <br />
+    <br />
+    <br />
+
+
+    <div class="list-inline" style="border-style: solid; border-width: 1px; border-color: #999999;">
+        <p style="font-size: 1.5em; text-align: center"><i>Daily New Cases in @Model.cou.country</i></p>
+        <button class="btn btn-link" onclick="deathsLinearSwitch()">Linear</button>
+        <button class="btn btn-link" onclick="deathsLogSwitch()">Logarithmic</button>
+        <div id="deaths_chart"></div>
+    </div>
+
+    <br />
+    <br />
+    <br />
+
+
+    <div class="list-inline" style="border-style: solid; border-width: 1px; border-color: #999999;">
+        <p style="font-size: 1.5em; text-align: center"><i>Daily New Cases in @Model.cou.country</i></p>
+        <div id="dailydeaths_chart"></div>
+    </div>
+
 
 </div>
 
 @section scripts{
     <script>
+        google.charts.load('current', { packages: ['corechart', 'bar'] });
+        google.charts.setOnLoadCallback(drawDailyDeathsColScale);
 
-        google.charts.load('current', {packages: ['corechart', 'line']});
-        google.charts.setOnLoadCallback(drawBasic);
+        google.charts.load('current', { packages: ['corechart', 'bar'] });
+        google.charts.setOnLoadCallback(drawDailyCasesCol);
 
-        function BasicScale() {
-            google.charts.setOnLoadCallback(drawBasic);
+        google.charts.load('current', { packages: ['corechart', 'line'] });
+        google.charts.setOnLoadCallback(drawCasesLinearScale);
+
+        google.charts.load('current', { packages: ['corechart', 'line'] });
+        google.charts.setOnLoadCallback(drawActiveLinearScale);
+
+        google.charts.load('current', { packages: ['corechart', 'line'] });
+        google.charts.setOnLoadCallback(drawDeathsLinearScale);
+
+        google.charts.load('current', { packages: ['corechart', 'line'] });
+        google.charts.setOnLoadCallback(drawDailyDeathsLinearScale);
+
+
+        function casesLinearSwitch() {
+            google.charts.load('current', { packages: ['corechart', 'line'] });
+            google.charts.setOnLoadCallback(drawCasesLinearScale);
         }
-        function LogScale() {
-            google.charts.setOnLoadCallback(drawLogScales);
+
+        function casesLogSwitch() {
+            google.charts.load('current', { packages: ['corechart', 'line'] });
+            google.charts.setOnLoadCallback(drawCasesLogScale);
         }
 
-        function drawLogScales() {
+        function deathsLinearSwitch() {
+            google.charts.load('current', { packages: ['corechart', 'line'] });
+            google.charts.setOnLoadCallback(drawDeathsLinearScale);
+        }
+
+        function deathsLogSwitch() {
+            google.charts.load('current', { packages: ['corechart', 'line'] });
+            google.charts.setOnLoadCallback(drawDeathsLogScale);
+        }
+
+
+        function drawDeathsLogScale() {
             var data = new google.visualization.DataTable();
             data.addColumn('string', 'Date');
-            data.addColumn('number', 'Dogs');
+            data.addColumn('number', 'Cases');
+
+            @foreach (var item in Model.historical.timeline.deaths.dDeath)
+            {
+                @:  data.addRows([['@item.Key.ToString("MMMM dd, yyyy")', @item.Value]]);
+            }
+
+            var options = {
+                title: 'Total Deaths',
+                subtitle: '(Logarithmic Scale)',
+                'height': 400,
+                'lineWidth': 5,
+                hAxis: {
+                    title: '',
+                    textStyle: { fontSize: 12 },
+                    logScale: false
+                },
+                vAxis: {
+                    title: 'Total Coronavirus Deaths',
+                    logScale: true
+                },
+                colors: ['#FF9900']
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('deaths_chart'));
+            chart.draw(data, options);
+        }
+
+        function drawDailyDeathsColScale() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Date');
+            data.addColumn('number', 'Daily Deaths');
+
+            @{
+                var dic = Model.historical.timeline.deaths.dDeath;
+                long diff;
+
+                for (int i = 0; i < dic.Count - 1; i++)
+                {
+
+                    diff = Math.Abs(dic.ElementAt(i + 1).Value - dic.ElementAt(i).Value);
+                    @:  data.addRows([['@dic.ElementAt(i).Key.ToString("MMMM dd, yyyy")', @diff]]);
+                }
+            }
+
+            var options = {
+                title: 'Daily Deaths',
+                'height': 400,
+                'width': 1280,
+                hAxis: {
+                    title: '',
+                    textStyle: { fontSize: 12 }
+                },
+                vAxis: {
+                    title: 'Coronavirus Daily Deaths',
+                },
+                colors: ['#999999']
+            };
+
+            var chart = new google.visualization.ColumnChart(
+                document.getElementById('dailydeaths_chart'));
+
+            chart.draw(data, options);
+        }
+
+        function drawDeathsLinearScale() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Date');
+            data.addColumn('number', 'Deaths');
+
+            @foreach (var item in Model.historical.timeline.deaths.dDeath)
+            {
+                @:  data.addRows([['@item.Key.ToString("MMMM dd, yyyy")', @item.Value]]);
+            }
+
+            var options = {
+                title: 'Total Deaths',
+                subtitle: '(Linear Scale)',
+                'height': 400,
+                'lineWidth': 5,
+                hAxis: {
+                    title: '',
+                    textStyle: {fontSize: 12 }
+                },
+                vAxis: {
+                    title: 'Total Coronavirus Deaths'
+                },
+                colors: ['#FF9900']
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('deaths_chart'));
+
+            chart.draw(data, options);
+        }
+
+        function drawActiveLinearScale() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Date');
+            data.addColumn('number', 'Active');
+
+            @{
+                dic = Model.historical.timeline.cases.dCase;
+                var dic2 = Model.historical.timeline.recovered.dRecovered;
+
+                for (int i = 0; i < dic.Count; i++)
+                {
+                    diff = Math.Abs(dic.ElementAt(i).Value - dic2.ElementAt(i).Value);
+
+                    @:  data.addRows([['@dic.ElementAt(i).Key.ToString("MMMM dd, yyyy")', @diff]]);
+                }
+            }
+
+            var options = {
+                title: 'Active Cases',
+                subtitle: '(Linear Scale)',
+                'height': 400,
+                'lineWidth': 5,
+                hAxis: {
+                    title: '',
+                    textStyle: {fontSize: 12 }
+                },
+                vAxis: {
+                    title: 'Total Coronavirus Currently Infected'
+                },
+                colors: ['#33CCFF']
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('dailyactive_chart'));
+
+            chart.draw(data, options);
+        }
+
+        function drawDailyCasesCol() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Date');
+            data.addColumn('number', 'Cases');
+
+            @{
+                for (int i = 0; i < dic.Count - 1; i++)
+            {
+                diff = Math.Abs(dic.ElementAt(i).Value - dic.ElementAt(i + 1).Value);
+
+                @:  data.addRows([['@dic.ElementAt(i).Key.ToString("MMMM dd, yyyy")', @diff]]);
+            }
+        }
+
+
+            var options = {
+                title: 'Daily New Cases',
+                'height': 400,
+                'width': 1280,
+                hAxis: {
+                    title: '',
+                    textStyle: { fontSize: 12 }
+                },
+                vAxis: {
+                    title: 'Coronavirus Daily Cases',
+                },
+                colors: ['#999999']
+            };
+
+            var chart = new google.visualization.ColumnChart(
+                document.getElementById('dailycases_chart'));
+
+            chart.draw(data, options);
+        }
+
+        function drawCasesLogScale() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Date');
+            data.addColumn('number', 'Cases');
 
             @foreach (var item in Model.historical.timeline.cases.dCase)
             {
-                @:  data.addRows([ [ '@item.Key' , @item.Value] ]);
+                @:  data.addRows([['@item.Key.ToString("MMMM dd, yyyy")', @item.Value]]);
             }
 
             var options = {
@@ -74,6 +313,7 @@
                 'lineWidth': 5,
                 hAxis: {
                     title: '',
+                    textStyle: { fontSize: 12 },
                     logScale: false
                 },
                 vAxis: {
@@ -83,28 +323,28 @@
                 colors: ['#33CCFF']
             };
 
-            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+            var chart = new google.visualization.LineChart(document.getElementById('cases_chart'));
             chart.draw(data, options);
         }
 
-        function drawBasic() {
+        function drawCasesLinearScale() {
             var data = new google.visualization.DataTable();
             data.addColumn('string', 'Date');
             data.addColumn('number', 'Case');
 
             @foreach (var item in Model.historical.timeline.cases.dCase)
             {
-                @:  data.addRows([ [ '@item.Key' , @item.Value] ]);
+                @:  data.addRows([['@item.Key.ToString("MMMM dd, yyyy")', @item.Value]]);
             }
 
             var options = {
                 title: 'Total Cases',
                 subtitle: '(Linear Scale)',
-                
                 'height': 400,
                 'lineWidth': 5,
                 hAxis: {
-                    title: ''
+                    title: '',
+                    textStyle: {fontSize: 12 }
                 },
                 vAxis: {
                     title: 'Total Coronavirus Cases'
@@ -112,7 +352,7 @@
                 colors: ['#33CCFF']
             };
 
-            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+            var chart = new google.visualization.LineChart(document.getElementById('cases_chart'));
 
             chart.draw(data, options);
         }
@@ -120,8 +360,3 @@
 
     </script>
 }
-
-<p>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>

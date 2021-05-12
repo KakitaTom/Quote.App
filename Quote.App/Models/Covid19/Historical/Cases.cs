@@ -7,6 +7,6 @@ namespace Quote.App.Models.Covid19.Historical
 {
     public class Cases
     {
-        public Dictionary<string, long> dCase { get; set; }
+        public Dictionary<DateTime, long> dCase { get; set; }
     }
 }

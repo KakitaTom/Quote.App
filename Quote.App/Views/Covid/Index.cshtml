@@ -32,18 +32,30 @@
 @* <button>Oceania</button> *@
 @* <button>South America</button> *@
 
-@Html.ActionLink("All", "FilterByContinent", new { id = "All"}, new { @class = "btn btn-default"})
-@Html.ActionLink("Asia", "FilterByContinent", new { id = "Asia"}, new { @class = "btn btn-default" })
-@Html.ActionLink("Africa", "FilterByContinent", new { id = "Africa"}, new { @class = "btn btn-default" })
-@Html.ActionLink("Europe", "FilterByContinent", new { id = "Europe"}, new { @class = "btn btn-default" })
-@Html.ActionLink("North America", "FilterByContinent", new { id = "North America"}, new { @class = "btn btn-default" })
-@Html.ActionLink("Oceania", "FilterByContinent", new { id = "Oceania"}, new { @class = "btn btn-default" })
-@Html.ActionLink("South America", "FilterByContinent", new { id = "South America"}, new { @class = "btn btn-default" })
+
+@Html.ActionLink("MAIN", "Index", null, new { @class = "btn btn-default" })
+@Html.ActionLink("WEEKLY TRENDS", "Index", null, new { @class = "btn btn-default" })
+
+<br />
+
+@Html.ActionLink("Now", "Index", null ,new { @class = "btn btn-default" })
+@Html.ActionLink("Yesterday", "Index", null, new { @class = "btn btn-default" })
+@Html.ActionLink("2 Days Ago", "Index", null, new { @class = "btn btn-default" })
+
+<br />
+
+@Html.ActionLink("All", "FilterByContinent", new { id = "All" }, new { @class = "btn btn-default" })
+@Html.ActionLink("Asia", "FilterByContinent", new { id = "Asia" }, new { @class = "btn btn-default" })
+@Html.ActionLink("Africa", "FilterByContinent", new { id = "Africa" }, new { @class = "btn btn-default" })
+@Html.ActionLink("Europe", "FilterByContinent", new { id = "Europe" }, new { @class = "btn btn-default" })
+@Html.ActionLink("North America", "FilterByContinent", new { id = "North America" }, new { @class = "btn btn-default" })
+@Html.ActionLink("Oceania", "FilterByContinent", new { id = "Oceania" }, new { @class = "btn btn-default" })
+@Html.ActionLink("South America", "FilterByContinent", new { id = "South America" }, new { @class = "btn btn-default" })
 
 <table class="tablee table-hover table-bordered">
     <tr>
         <th><b>Country</b></th>
-        <th><b>Total<br/>Cases</b></th>
+        <th><b>Total<br />Cases</b></th>
         <th><b>Today<br />case</b></th>
         <th><b>Total<br />Deaths</b></th>
         <th><b>Today<br />Deaths</b></th>
