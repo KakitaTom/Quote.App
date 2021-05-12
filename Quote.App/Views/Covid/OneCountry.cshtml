@@ -1,32 +1,125 @@
-﻿@model Quote.App.Models.Covid19.CountryRoot
+﻿@model Quote.App.ViewModel.CountryHistoricalViewModel
 
 @{
-    ViewBag.Title = @Model.country;
+    ViewBag.Title = @Model.cou.country;
 }
+
+<head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
 
 <div style="margin-top: 3%">
     <div style="text-align: center">
-        <p><img src="@Model.countryInfo.flag" height="75px" width="112.5px" style="display: inline-block"></p>
-        <p style="font-size: 3.5em"><i><b>@Model.country</b></i></p>
+        <p><img src="@Model.cou.countryInfo.flag" height="75px" width="112.5px" style="display: inline-block"></p>
+        <p style="font-size: 3.5em"><i><b>@Model.cou.country</b></i></p>
     </div>
 
     <br />
 
     <div style="text-align: center">
         <p style="font-size: 2em">Coronavirus Cases:</p>
-        <p style="font-size: 3.5em; color: darkgrey"><b><i>@String.Format("{0:n0}", @Model.cases)</i></b></p>
+        <p style="font-size: 3.5em; color: darkgrey"><b><i>@String.Format("{0:n0}", @Model.cou.cases)</i></b></p>
     </div>
 
     <div style="text-align: center">
         <p style="font-size: 2em">Deaths:</p>
-        <p style="font-size: 3.5em; color:grey"><b><i>@String.Format("{0:n0}", @Model.deaths)</i></b></p>
+        <p style="font-size: 3.5em; color:grey"><b><i>@String.Format("{0:n0}", @Model.cou.deaths)</i></b></p>
     </div>
 
     <div style="text-align: center">
         <p style="font-size: 2em">Recovered:</p>
-        <p style="font-size: 3.5em; color:#8ACA2B"><b><i>@String.Format("{0:n0}", @Model.recovered)</i></b></p>
+        <p style="font-size: 3.5em; color:#8ACA2B"><b><i>@String.Format("{0:n0}", @Model.cou.recovered)</i></b></p>
     </div>
+    
+    <hr/>
+
+    <div class="list-inline">
+        <p style="font-size: 1.5em">Total Coronavirus Cases in @Model.cou.country</p>
+        <button class="btn btn-link" onclick="BasicScale()">Linear</button>
+        <button class="btn btn-link" onclick="LogScale()">Logarithmic</button>
+        <div id="chart_div"></div>
+
+    </div>
+    
+
 </div>
+
+@section scripts{
+    <script>
+
+        google.charts.load('current', {packages: ['corechart', 'line']});
+        google.charts.setOnLoadCallback(drawBasic);
+
+        function BasicScale() {
+            google.charts.setOnLoadCallback(drawBasic);
+        }
+        function LogScale() {
+            google.charts.setOnLoadCallback(drawLogScales);
+        }
+
+        function drawLogScales() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Date');
+            data.addColumn('number', 'Dogs');
+
+            @foreach (var item in Model.historical.timeline.cases.dCase)
+            {
+                @:  data.addRows([ [ '@item.Key' , @item.Value] ]);
+            }
+
+            var options = {
+                title: 'Total Cases',
+                subtitle: '(Logarithmic Scale)',
+                'height': 400,
+                'lineWidth': 5,
+                hAxis: {
+                    title: '',
+                    logScale: false
+                },
+                vAxis: {
+                    title: 'Total Coronavirus Cases',
+                    logScale: true
+                },
+                colors: ['#33CCFF']
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+
+        function drawBasic() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Date');
+            data.addColumn('number', 'Case');
+
+            @foreach (var item in Model.historical.timeline.cases.dCase)
+            {
+                @:  data.addRows([ [ '@item.Key' , @item.Value] ]);
+            }
+
+            var options = {
+                title: 'Total Cases',
+                subtitle: '(Linear Scale)',
+                
+                'height': 400,
+                'lineWidth': 5,
+                hAxis: {
+                    title: ''
+                },
+                vAxis: {
+                    title: 'Total Coronavirus Cases'
+                },
+                colors: ['#33CCFF']
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+
+            chart.draw(data, options);
+        }
+
+
+    </script>
+}
 
 <p>
     @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |

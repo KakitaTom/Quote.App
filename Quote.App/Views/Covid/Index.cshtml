@@ -4,7 +4,25 @@
     ViewBag.Title = "Index";
 }
 
-<h2>All over the world</h2>
+<div style="margin-top: 3%">
+
+    <div style="text-align: center">
+        <p style="font-size: 2em">Coronavirus Cases:</p>
+        <p style="font-size: 3.5em; color: darkgrey"><b><i>@String.Format("{0:n0}", @Model.global.cases)</i></b></p>
+    </div>
+
+    <div style="text-align: center">
+        <p style="font-size: 2em">Deaths:</p>
+        <p style="font-size: 3.5em; color:grey"><b><i>@String.Format("{0:n0}", @Model.global.deaths)</i></b></p>
+    </div>
+
+    <div style="text-align: center">
+        <p style="font-size: 2em">Recovered:</p>
+        <p style="font-size: 3.5em; color:#8ACA2B"><b><i>@String.Format("{0:n0}", @Model.global.recovered)</i></b></p>
+    </div>
+
+    <hr />
+</div>
 
 @* <button>All</button> *@
 @* <button>Asia</button> *@

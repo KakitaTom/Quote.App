@@ -133,10 +133,16 @@
     <Compile Include="Models\Covid19\CountryInfo.cs" />
     <Compile Include="Models\Covid19\CountryRoot.cs" />
     <Compile Include="Models\Covid19\Global.cs" />
+    <Compile Include="Models\Covid19\Historical\Cases.cs" />
+    <Compile Include="Models\Covid19\Historical\Deaths.cs" />
+    <Compile Include="Models\Covid19\Historical\HistoricalRoot.cs" />
+    <Compile Include="Models\Covid19\Historical\Recovered.cs" />
+    <Compile Include="Models\Covid19\Historical\Timeline.cs" />
     <Compile Include="Models\Quote.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\AllCountriesViewModel.cs" />
     <Compile Include="ViewModel\ContinentCountriesViewModel.cs" />
+    <Compile Include="ViewModel\CountryHistoricalViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -183,6 +189,7 @@
     <Content Include="Views\Covid\Index.cshtml" />
     <Content Include="Views\Covid\OneCountry.cshtml" />
     <Content Include="Views\Covid\FilterByContinent.cshtml" />
+    <Content Include="Views\Covid\GetHistorical.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

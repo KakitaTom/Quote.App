@@ -6,7 +6,9 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Quote.App.Models.Covid19;
+using Quote.App.Models.Covid19.Historical;
 using Quote.App.ViewModel;
 
 namespace Quote.App.Controllers.CovidController
@@ -55,7 +57,12 @@ namespace Quote.App.Controllers.CovidController
         [Route("covid/country/{id}")]
         public ActionResult OneCountry(string id)
         {
-            CountryRoot country = null;
+            CountryHistoricalViewModel viewModel = new CountryHistoricalViewModel()
+            {
+                cou = null,
+                historical = null
+            };
+
 
             using (var client = new HttpClient())
             {
@@ -69,18 +76,35 @@ namespace Quote.App.Controllers.CovidController
                     var read = result.Content.ReadAsStringAsync();
                     read.Wait();
 
-                    country = JsonConvert.DeserializeObject<CountryRoot>(read.Result);
-                    return View(country);
+                    viewModel.cou = JsonConvert.DeserializeObject<CountryRoot>(read.Result);
                 }
             }
 
-            return HttpNotFound();
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://corona.lmao.ninja");
+                var get = client.GetAsync("v2/historical/" + id + "?lastdays=all");
+                get.Wait();
+
+                var result = get.Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    var read = result.Content.ReadAsStringAsync();
+                    read.Wait();
+
+                    viewModel.historical = JsonConvert.DeserializeObject<HistoricalRoot>(read.Result);
+
+                    dynamic stuff = JObject.Parse(read.Result);
+                    viewModel.historical.timeline.cases.dCase = JsonConvert.DeserializeObject<Dictionary<string, long>>((stuff.timeline.cases).ToString());
+                    viewModel.historical.timeline.deaths.dDeath = JsonConvert.DeserializeObject<Dictionary<string, long>>((stuff.timeline.deaths).ToString());
+                    viewModel.historical.timeline.recovered.dRecovered = JsonConvert.DeserializeObject<Dictionary<string, long>>((stuff.timeline.recovered).ToString());
+                }
+            }
+            return View(viewModel);
         }
 
         public ActionResult FilterByContinent(string id)
         {
-
-
             //All
             if (id.Equals("All", StringComparison.CurrentCultureIgnoreCase))
             {
@@ -112,12 +136,9 @@ namespace Quote.App.Controllers.CovidController
                 oseania = cons.FirstOrDefault(o => o.continent == "Australia/Oceania");
             }
 
-
-
             ContinentRoot con = null;
             IEnumerable<CountryRoot> cous = null;
             string listCountries;
-
 
             using (var client = new HttpClient())
             {
@@ -134,8 +155,6 @@ namespace Quote.App.Controllers.CovidController
                     con = JsonConvert.DeserializeObject<ContinentRoot>(read.Result);
                 }
             }
-
-            
 
             if (id.Equals("Oceania", StringComparison.CurrentCultureIgnoreCase))
             {
@@ -163,8 +182,6 @@ namespace Quote.App.Controllers.CovidController
                 }
             }
 
-            
-
             var viewModel = new ContinentCountriesViewModel()
             {
                 continent = con,
@@ -173,6 +190,37 @@ namespace Quote.App.Controllers.CovidController
 
             return View(viewModel);
 
+
+        }
+
+        public ActionResult GetHistorical(string id)
+        {
+            HistoricalRoot his = null;
+            
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://corona.lmao.ninja");
+                var get = client.GetAsync("v2/historical/" + id + "?lastdays=3");
+                get.Wait();
+
+                var result = get.Result;
+                if(result.IsSuccessStatusCode)
+                {
+                    var read = result.Content.ReadAsStringAsync();
+                    read.Wait();
+
+                    his = JsonConvert.DeserializeObject<HistoricalRoot>(read.Result);
+
+                    dynamic stuff = JObject.Parse(read.Result);
+                    his.timeline.cases.dCase = JsonConvert.DeserializeObject<Dictionary<string, long>>((stuff.timeline.cases).ToString());
+                    his.timeline.deaths.dDeath = JsonConvert.DeserializeObject<Dictionary<string, long>>((stuff.timeline.deaths).ToString());
+                    his.timeline.recovered.dRecovered = JsonConvert.DeserializeObject<Dictionary<string, long>>((stuff.timeline.recovered).ToString());
+
+                    return View(his);
+                }
+            }
+
+            return HttpNotFound();
 
         }
 

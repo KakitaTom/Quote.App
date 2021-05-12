@@ -1,0 +1,24 @@
+﻿@model Quote.App.Models.Covid19.Historical.HistoricalRoot
+
+@{
+    ViewBag.Title = "GetHistorical";
+}
+
+<h2>GetHistorical</h2>
+
+@foreach (var item in Model.timeline.cases.dCase)
+{
+    <h3>item: @item.Key and value @item.Value</h3>
+}
+
+
+@foreach (var item in Model.timeline.deaths.dDeath)
+{
+    <h3>item: @item.Key and value @item.Value</h3>
+}
+
+
+@foreach (var item in Model.timeline.recovered.dRecovered)
+{
+    <h3>item: @item.Key and value @item.Value</h3>
+}
