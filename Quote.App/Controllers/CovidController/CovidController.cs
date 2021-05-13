@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Quote.App.Models.Covid19;
@@ -15,26 +17,12 @@ namespace Quote.App.Controllers.CovidController
 {
     public class CovidController : Controller
     {
+       
         // GET: Covid
         public ActionResult Index()
         {
-            var viewModel = new AllCountriesViewModel();
-
-            using(var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri("https://disease.sh");
-                var get = client.GetAsync("/v3/covid-19/all");
-                get.Wait();
-
-                var result = get.Result;
-                if (result.IsSuccessStatusCode)
-                {
-                    var read = result.Content.ReadAsStringAsync();
-                    read.Wait();
-
-                    viewModel.global = JsonConvert.DeserializeObject<Global>(read.Result);
-                }
-            }
+            CountryRoot cou = new CountryRoot();
+            IList<CountryRoot> countries = null;
 
             using (var client = new HttpClient())
             {
@@ -48,10 +36,31 @@ namespace Quote.App.Controllers.CovidController
                     var read = result.Content.ReadAsStringAsync();
                     read.Wait();
 
-                    viewModel.countries = JsonConvert.DeserializeObject<IEnumerable<CountryRoot>>(read.Result);
-                } }
+                    countries = JsonConvert.DeserializeObject<IList<CountryRoot>>(read.Result);
+                }
+            }
 
-            return View(viewModel);
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://disease.sh");
+                var get = client.GetAsync("/v3/covid-19/all");
+                get.Wait();
+
+                var result = get.Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    var read = result.Content.ReadAsStringAsync();
+                    read.Wait();
+
+                    cou = JsonConvert.DeserializeObject<CountryRoot>(read.Result);
+                    cou.country = "World";
+                    countries.Add(cou);
+
+                    countries = countries.OrderByDescending(c => c.cases).ToList();
+                }
+            }
+
+            return View(countries);
         }
 
         [Route("covid/country/{id}")]
@@ -105,24 +114,62 @@ namespace Quote.App.Controllers.CovidController
 
         public ActionResult FilterByContinent(string id)
         {
-            //All
+            CountryRoot cou = new CountryRoot()
+            {
+                country = id
+            };
+            IList<CountryRoot> countries = null;
+            string listOfCountries = "";
+            ContinentRoot getAllCountries = null;
+
+            //All Or Oceania
             if (id.Equals("All", StringComparison.CurrentCultureIgnoreCase))
             {
-                return RedirectToAction("Index", "Covid", null);
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("https://disease.sh");
+                    var get = client.GetAsync("/v3/covid-19/countries");
+                    get.Wait();
+
+                    var result = get.Result;
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var read = result.Content.ReadAsStringAsync();
+                        read.Wait();
+
+                        countries = JsonConvert.DeserializeObject<IList<CountryRoot>>(read.Result);
+                    }
+                }
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("https://disease.sh");
+                    var get = client.GetAsync("/v3/covid-19/all");
+                    get.Wait();
+
+                    var result = get.Result;
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var read = result.Content.ReadAsStringAsync();
+                        read.Wait();
+
+                        cou = JsonConvert.DeserializeObject<CountryRoot>(read.Result);
+                        cou.country = "World";
+
+                        countries.Add(cou);
+
+                        countries = countries.OrderByDescending(c => c.cases).ToList();
+                    }
+                }
+
+                return View("Index", countries);
             }
-
-            IEnumerable<ContinentRoot> cons = null;
-            ContinentRoot con = null;
-            IEnumerable<CountryRoot> cous = null;
-            string listCountries;
-
-            //Oceania
-            if (id.Equals("Oceania", StringComparison.CurrentCultureIgnoreCase))
+            else if (id.Equals("Oceania", StringComparison.CurrentCultureIgnoreCase))
             {
                 id = "Australia%2FOceania";
-
             }
 
+            
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("https://disease.sh");
@@ -135,16 +182,26 @@ namespace Quote.App.Controllers.CovidController
                     var read = result.Content.ReadAsStringAsync();
                     read.Wait();
 
-                    con = JsonConvert.DeserializeObject<ContinentRoot>(read.Result);
+                    getAllCountries = JsonConvert.DeserializeObject<ContinentRoot>(read.Result);
+
+                    cou.cases = getAllCountries.cases;
+                    cou.todayCases = getAllCountries.todayCases;
+                    cou.deaths = getAllCountries.deaths;
+                    cou.todayDeaths = getAllCountries.todayDeaths;
+                    cou.recovered = getAllCountries.recovered;
+                    cou.todayRecovered = getAllCountries.recovered;
+                    cou.active = getAllCountries.active;
+                    cou.critical = getAllCountries.critical;
+                    cou.population = getAllCountries.population;
                 }
             }
 
-            listCountries = string.Join(",", con.countries);
+            listOfCountries = string.Join(",", getAllCountries.countries);
 
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("https://disease.sh");
-                var get = client.GetAsync("/v3/covid-19/countries/" + listCountries);
+                var get = client.GetAsync("/v3/covid-19/countries/" + listOfCountries);
                 get.Wait();
 
                 var result = get.Result;
@@ -153,19 +210,14 @@ namespace Quote.App.Controllers.CovidController
                     var read = result.Content.ReadAsStringAsync();
                     read.Wait();
 
-                    cous = JsonConvert.DeserializeObject<IEnumerable<CountryRoot>>(read.Result);
+                    countries = JsonConvert.DeserializeObject<IList<CountryRoot>>(read.Result);
+
+                    countries.Add(cou);
+                    countries = countries.OrderByDescending(c => c.cases).ToList();
                 }
             }
 
-            var viewModel = new ContinentCountriesViewModel()
-            {
-                continent = con,
-                countries = cous
-            };
-
-            return View(viewModel);
-
-
+            return View("Index", countries);
         }
 
         public ActionResult GetHistorical(string id)

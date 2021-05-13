@@ -8,7 +8,6 @@ namespace Quote.App.ViewModel
 {
     public class AllCountriesViewModel
     {
-        public Global global { get; set; }
-        public IEnumerable<CountryRoot> countries { get; set; }
+        public IList<CountryRoot> countries { get; set; }
     }
 }

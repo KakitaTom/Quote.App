@@ -1,31 +1,33 @@
-﻿@model Quote.App.ViewModel.AllCountriesViewModel
+﻿@model IList<Quote.App.Models.Covid19.CountryRoot>
 
 @{
     ViewBag.Title = "Index";
 }
 
 <div style="margin-top: 3%">
+    
+    <div style="text-align: center"><p style="font-size: 6em;"><b><i>@Model[0].country</i></b></p></div>
 
     <div style="text-align: center">
         <p style="font-size: 2em">Coronavirus Cases:</p>
-        <p style="font-size: 3.5em; color: darkgrey"><b><i>@String.Format("{0:n0}", @Model.global.cases)</i></b></p>
+        <p style="font-size: 3.5em; color: darkgrey"><b><i>@String.Format("{0:n0}", @Model[0].cases)</i></b></p>
     </div>
 
     <div style="text-align: center">
         <p style="font-size: 2em">Deaths:</p>
-        <p style="font-size: 3.5em; color:grey"><b><i>@String.Format("{0:n0}", @Model.global.deaths)</i></b></p>
+        <p style="font-size: 3.5em; color: grey"><b><i>@String.Format("{0:n0}", @Model[0].deaths)</i></b></p>
     </div>
 
     <div style="text-align: center">
         <p style="font-size: 2em">Recovered:</p>
-        <p style="font-size: 3.5em; color:#8ACA2B"><b><i>@String.Format("{0:n0}", @Model.global.recovered)</i></b></p>
+        <p style="font-size: 3.5em; color: #8ACA2B"><b><i>@String.Format("{0:n0}", @Model[0].recovered)</i></b></p>
     </div>
 
-    <hr />
+    <hr/>
 </div>
 
 @* <button>All</button> *@
-@* <button>Asia</button> *@
+<button class="btn btn-primary js-asia">Asia</button>
 @* <button>Africa</button> *@
 @* <button>Europe</button> *@
 @* <button>North America</button> *@
@@ -52,8 +54,12 @@
 @Html.ActionLink("Oceania", "FilterByContinent", new { id = "Oceania" }, new { @class = "btn btn-default" })
 @Html.ActionLink("South America", "FilterByContinent", new { id = "South America" }, new { @class = "btn btn-default" })
 
-<table class="tablee table-hover table-bordered">
-    <tr>
+
+<br />
+
+<table class="table table-bordered table-hover" id="covidTable">
+    <thead>
+    <tr style="text-align: center">
         <th><b>Country</b></th>
         <th><b>Total<br />Cases</b></th>
         <th><b>Today<br />case</b></th>
@@ -66,21 +72,10 @@
         <th><b>Tests</b></th>
         <th><b>Population</b></th>
     </tr>
-
-    <tr>
-        <td>Global</td>
-        <td>@Model.global.cases</td>
-        <td>@Model.global.todayCases</td>
-        <td>@Model.global.deaths</td>
-        <td>@Model.global.todayDeaths</td>
-        <td>@Model.global.recovered</td>
-        <td>@Model.global.todayRecovered</td>
-        <td>@Model.global.active</td>
-        <td>@Model.global.critical</td>
-        <td>@Model.global.tests</td>
-        <td>@Model.global.population</td>
-    </tr>
-    @foreach (var country in Model.countries)
+    </thead>
+    
+    <tbody>
+    @foreach (var country in Model)
     {
         <tr style="text-align: center">
             <td>@Html.ActionLink(country.country, "OneCountry", new { id = country.country })</td>
@@ -96,5 +91,52 @@
             <td>@country.population</td>
         </tr>
     }
+    </tbody>
+    <tfoot>
+    <tr style="text-align: center">
+        <td>Total</td>
+        <td>@Model[0].cases</td>
+        <td>@Model[0].todayCases</td>
+        <td>@Model[0].deaths</td>
+        <td>@Model[0].todayDeaths</td>
+        <td>@Model[0].recovered</td>
+        <td>@Model[0].todayRecovered</td>
+        <td>@Model[0].active</td>
+        <td>@Model[0].critical</td>
+        <td>@Model[0].tests</td>
+        <td>@Model[0].population</td>
+    </tr>
+    </tfoot>
+    
+
+    
 </table>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $("#covidTable").DataTable(
+                {
+                    paging: false,
+                    order: [[1, 'des']],
+                    fixedHeader: {
+                        header: true,
+                        footer: false
+                    },
+
+
+                });
+
+
+            $(".js-asia").on("click", function() {
+                alert($(this).attr('class'));
+            });
+
+
+        })
+
+
+        
+    </script>
+}
 

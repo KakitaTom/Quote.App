@@ -21,6 +21,5 @@ namespace Quote.App.Models.Covid19
         public long critical { get; set; }
         public long tests { get; set; }
         public long population { get; set; }
-        public string continent { get; set; }
     }
 }
